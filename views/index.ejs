@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Page</title>
+</head>
+
+<body>
+    <h1>Hello All</h1>
+    <!-- For creating a new Key-Value Pair-->
+    <h3>Create a Key-Value Pair Here:</h3>
+    <p>Your Key will be randomly generated using Random Key Generator</p>
+    <form name="create" action="/create" method="POST" onsubmit="return validateCreateForm()">
+        <input type="text" placeholder="Name" name="name">
+        <input type="number" placeholder="Age" name="age">
+        <input type="number" placeholder="Time To Live (seconds)" name="ttl">
+        <button type="submit">Create</button>
+    </form>
+    <p>Time To Live Property is completely optional.</p> 
+    
+    <!-- Key Value Pair is displayed in this page using table-->
+    <h3>Read All Key-Value Pairs Here:</h3>
+    <p>You can view the created Key-Value Pairs by clicking this button</p>
+    <p>The Key-Value Pair won't be displayed in next page until you open the index.ejs with live server.</p>
+    <form action="/read" method="POST">
+        <button type="submit">List All Key-Value Pairs</button>
+    </form>
+
+    <!-- We can delete the key value pair by specifying the key here-->
+    <h3>Delete a Key-Value Pair Here:</h3>
+    <p>You can get the key by clicking above "List All Key-Value Pairs" Button!</p>
+    <form name="myForm" action="/delete" method="POST" onsubmit="return validateForm()">
+        <input type="text" placeholder="Enter Key to be deleted" name="key">
+        <button type="submit">Delete Key</button>
+    </form>
+    
+    <script>
+        // A Simple Validation For the above forms.
+        function validateForm() {
+            var z = document.forms["myForm"]["key"].value;
+            if (z == "") {
+                alert("Key must be filled out");
+                return false;
+            }
+        }
+        function validateCreateForm() {
+            var x = document.forms["create"]["name"].value;
+            var y = document.forms["create"]["age"].value;
+            if (x == "") {
+                alert("Name must be filled out");
+                return false;
+            }
+            if (y == "") {
+                alert("Age must be filled out");
+                return false;
+            }
+        }
+    </script>
+</body>
+
+</html>

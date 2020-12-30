@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Page</title>
+    <style>
+        #rag {
+            border: 1px solid red;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Displaying Data</h1>
+    <p>Select any one of the key to read its data:</p>
+    <div id="id01"></div> <br>
+    <form action="/" method="POST">
+        <button>Back to home page!</button>
+    </form>
+
+    <script>
+        //Getting data.json from frontend server
+        var xmlhttp = new XMLHttpRequest();
+        var url = "http://127.0.0.1:5500/data.json";
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var myArr = JSON.parse(this.responseText);
+                var arr = convertToArray(myArr);
+                buildTable(arr);
+            }
+        };
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+
+        //Convert the given json object into Array
+        function convertToArray(jsarr) {
+            var now = new Date().getTime();
+            var obj = jsarr;
+            var res = [];
+            var keys = Object.keys(obj)
+            var count = 0;
+            const filteredObject = {};
+            for (var i in obj) {
+                if (obj[i] != undefined) {
+                    if (obj[i].ttl == undefined || obj[i].ttl == "") {
+                        res.push([obj[i], keys[count++]]);
+                    } else if (now > (obj[i].ttl * 1000 + obj[i].timeSaved * 1)) {
+                        let xhr = new XMLHttpRequest();
+                        xhr.open("POST", "send", true);
+                        xhr.setRequestHeader("Content-Type", "application/json");
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState === 4 && xhr.status === 200) {
+                                result.innerHTML = this.responseText;
+                            }
+                        };
+                        obj[i] = null
+                        delete obj[i]
+                        xhr.send(JSON.stringify(obj));
+                        xhr.abort();
+                    } else if (now <= (obj[i]?.ttl * 1000 + obj[i]?.timeSaved * 1)) {
+                        res.push([obj[i], keys[count++]]);
+                    }
+                }
+
+            }
+            return res;
+        }
+
+        //Display the array as table with keys as hyperlinks
+        function buildTable(arr) {
+            var out = "";
+            var i;
+            out += '<table>'
+            out += '<tr><th id="rag">Name</th><th id="rag">Age</th><th id="rag">TTL</th><th id="rag">Key</th></tr>'
+            for (i = 0; i < arr.length; i++) {
+                out += '<tr>';
+                out += '<td id="rag">' + arr[i][0].name + '</td>';
+                out += '<td id="rag">' + arr[i][0].age + '</td>';
+                out += '<td id="rag">' + arr[i][0].ttl + '</td>';
+                out += '<td id="rag"><a id="link1" href="">' + arr[i][1] + '</a></td></tr>';
+            }
+            out += '</table>'
+            document.getElementById("id01").innerHTML = out;
+            var elem = document.querySelectorAll('a');
+            for (i = 0; i < arr.length; i++) {
+                elem.item(i).setAttribute('href', '/read/' + elem.item(i).text)
+            }
+        }
+    </script>
+</body>
+
+</html>
